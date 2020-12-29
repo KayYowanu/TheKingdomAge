@@ -1,0 +1,33 @@
+@using TKA.Contacts.Services
+@using TKA.Contacts.Models
+
+@namespace TKA.Contacts
+@inherits ModuleBase
+@inject IContactsService ContactsService
+@inject NavigationManager NavigationManager
+
+
+
+<div class="container1" style="width:100%">
+    <img src="/images/contact.png" alt="Snow">
+    <div class="centered">
+        <h2>Contact Us</h2><br />
+        <h5>You can reach out to us and we're a friendly bunch that love to talk about Jesus.</h5>
+    </div>
+</div>
+<div class="container2">
+        <form action="">
+            <input type="text" id="name" name="fullname" placeholder="Your full name..">
+
+            <input type="text" id="email" name="email" placeholder="Your email..">
+
+            <textarea id="message" name="message" placeholder="Type your message here.." style="height:100px"></textarea>
+
+            <button type="button" class="btn btn-success">Send Message</button>
+
+</form>
+    </div>
+
+
+@code {
+}

@@ -23,5 +23,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>..\Oqtane.Server\bin\Debug\</OutputPath>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="BlazorStrap" Version="1.3.3" />
+  </ItemGroup>
 
 </Project>

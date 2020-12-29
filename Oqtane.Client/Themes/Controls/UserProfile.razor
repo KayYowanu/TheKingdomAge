@@ -10,12 +10,12 @@
             <text>...</text>
         </Authorizing>
         <Authorized>
-            <button type="button" class="btn btn-primary" @onclick="UpdateProfile">@context.User.Identity.Name</button>
+            <button type="button" class="btn bg-secondary" @onclick="UpdateProfile">@context.User.Identity.Name</button>
         </Authorized>
         <NotAuthorized>
             @if (PageState.Site.AllowRegistration)
             {
-            <button type="button" class="btn btn-primary" @onclick="RegisterUser">@Localizer["Register"]</button>
+            <button type="button" class="btn bg-secondary" @onclick="RegisterUser">@Localizer["Register"]</button>
             }
         </NotAuthorized>
     </AuthorizeView>

@@ -1,0 +1,96 @@
+@using Oqtane.Modules.Controls
+@using TKA.Contacts.Services
+@using TKA.Contacts.Models
+
+@namespace TKA.Contacts
+@inherits ModuleBase
+@inject IContactsService ContactsService
+@inject NavigationManager NavigationManager
+
+<table class="table table-borderless">
+    <tr>
+        <td>
+            <Label For="name" HelpText="Enter a name">Name: </Label>
+        </td>
+        <td>
+            <input id="name" class="form-control" @bind="@_name" />
+        </td>
+    </tr>
+</table>
+<button type="button" class="btn btn-success" @onclick="Save">Save</button>
+<NavLink class="btn btn-secondary" href="@NavigateUrl()">Cancel</NavLink>
+<br />
+<br />
+@if (PageState.Action == "Edit")
+{
+    <AuditInfo CreatedBy="@_createdby" CreatedOn="@_createdon"></AuditInfo>
+}
+
+@code {
+    public override SecurityAccessLevel SecurityAccessLevel => SecurityAccessLevel.Edit;
+
+    public override string Actions => "Add,Edit";
+
+    public override string Title => "Manage Contacts";
+
+    public override List<Resource> Resources => new List<Resource>()
+    {
+        new Resource { ResourceType = ResourceType.Stylesheet, Url = ModulePath() + "Module.css" }
+    };
+
+    int _id;
+    string _name;
+    string _createdby;
+    DateTime _createdon;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            if (PageState.Action == "Edit")
+            {
+                _id = Int32.Parse(PageState.QueryString["id"]);
+                Contacts Contacts = await ContactsService.GetContactsAsync(_id, ModuleState.ModuleId);
+                if (Contacts != null)
+                {
+                    _name = Contacts.Name;
+                    _createdby = Contacts.CreatedBy;
+                    _createdon = Contacts.CreatedOn;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(ex, "Error Loading Contacts {ContactsId} {Error}", _id, ex.Message);
+            AddModuleMessage("Error Loading Contacts", MessageType.Error);
+        }
+    }
+
+    private async Task Save()
+    {
+        try
+        {
+            if (PageState.Action == "Add")
+            {
+                Contacts Contacts = new Contacts();
+                Contacts.ModuleId = ModuleState.ModuleId;
+                Contacts.Name = _name;
+                Contacts = await ContactsService.AddContactsAsync(Contacts);
+                await logger.LogInformation("Contacts Added {Contacts}", Contacts);
+            }
+            else
+            {
+                Contacts Contacts = await ContactsService.GetContactsAsync(_id, ModuleState.ModuleId);
+                Contacts.Name = _name;
+                await ContactsService.UpdateContactsAsync(Contacts);
+                await logger.LogInformation("Contacts Updated {Contacts}", Contacts);
+            }
+            NavigationManager.NavigateTo(NavigateUrl());
+        }
+        catch (Exception ex)
+        {
+            await logger.LogError(ex, "Error Saving Contacts {Error}", ex.Message);
+            AddModuleMessage("Error Saving Contacts", MessageType.Error);
+        }
+    }
+}
